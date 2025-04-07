@@ -1,11 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { useState } from "react";
+import "./App.css";
+import FontList from "./components/FontList";
+import swal from "sweetalert";
 function App() {
-
   const [dragActive, setDragActive] = useState(false);
+  const [fontFile, setFontFile] = useState([]);
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file && file.name.endsWith(".ttf")) {
+      setFontFile((prevFiles) => [
+        ...prevFiles,
+        { file, name: file.name.split("-")[0] },
+      ]);
+    } else {
+      swal("Sorry!", "Please upload a valid font file (.ttf)", "warning");
+    }
+  };
+  const handleFileSelectDrag = (file) => {
+    if (file && file.name.endsWith(".ttf")) {
+      setFontFile((prevFiles) => [
+        ...prevFiles,
+        { file, name: file.name.split("-")[0] },
+      ]);
+    } else {
+      swal("Sorry!", "Please upload a valid font file (.ttf)", "warning");
+    }
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -19,21 +40,13 @@ function App() {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
-    
+
     const file = e.dataTransfer.files[0];
     if (file && isValidFont(file)) {
       onFileSelect(file);
+      handleFileSelectDrag(file);
     } else {
-      alert("Please upload a valid font file (.ttf, .otf, .woff, .woff2)");
-    }
-  };
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file && isValidFont(file)) {
-      onFileSelect(file);
-    } else {
-      alert("Please upload a valid font file (.ttf)");
+      swal("Sorry!", "Please upload a valid font file (.ttf)", "warning");
     }
   };
 
@@ -42,28 +55,54 @@ function App() {
     const fileExtension = file.name.split(".").pop().toLowerCase();
     return validExtensions.includes(fileExtension);
   };
+
+  const onFileSelect = (file) => {
+    console.log("Selected file: ", file);
+  };
+
+  const handleRemoveFile = (fileName) => {
+    setFontFile(fontFile.filter((file) => file.name !== fileName));
+  };
+
   return (
-   <div>
-     <div
-    className={`border-2 border-dashed border-gray-200 p-6 text-center cursor-pointer h-[70vh] ${
-      dragActive ? "bg-blue-100" : "bg-gray-100"
-    }`}
-    onDragOver={handleDragOver}
-    onDragLeave={handleDragLeave}
-    onDrop={handleDrop}
-  >
-    <input type="file" accept=".ttf,.otf,.woff,.woff2" onChange={handleFileSelect} hidden id="font-upload" />
-    <label htmlFor="font-upload">
-      {dragActive ? (
-        <p className="text-blue-500 font-semibold">Drop the font file here...</p>
-      ) : (
-        <p className="text-gray-600"><span className='text-blue-400 font-medium'>Click to upload</span> or drag and drop <br></br> Only TTF File Allowed
-        </p>
-      )}
-    </label>
-  </div>
-   </div>
-  )
+    <div>
+      <div
+        className={`flex justify-center items-center border-2 border-dashed border-gray-200 p-6 text-center cursor-pointer h-[70vh] ${
+          dragActive ? "bg-blue-100" : "bg-gray-100"
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          accept=".ttf"
+          onChange={handleFileSelect}
+          hidden
+          id="font-upload"
+        />
+        <label htmlFor="font-upload">
+          {dragActive ? (
+            <p className="text-blue-500 font-semibold">
+              Drop the font file here...
+            </p>
+          ) : (
+            <p className="text-gray-600">
+              <span className="text-blue-400 font-medium">Click to upload</span>{" "}
+              or drag and drop <br /> Only TTF File Allowed
+            </p>
+          )}
+        </label>
+      </div>
+
+      <FontList
+        fontFile={fontFile}
+        handleRemoveFile={handleRemoveFile}
+      ></FontList>
+
+      
+    </div>
+  );
 }
 
-export default App
+export default App;
