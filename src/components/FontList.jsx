@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const FontList = ({fontFile,handleRemoveFile}) => {
+const FontList = ({ fontFile, handleRemoveFile }) => {
   return (
     fontFile?.length > 0 && (
       <div className="mt-16">
@@ -8,27 +8,26 @@ const FontList = ({fontFile,handleRemoveFile}) => {
           <h3 className="text-2xl font-medium">Our Fonts</h3>
           <p>Brouse a list of Zepto fonts to build your font group:</p>
         </div>
-    
+
         <div className="overflow-x-auto mt-2">
           <table className="table">
-            {/* head */}
             <thead>
               <tr>
                 <th>Sl</th>
                 <th>Font Name</th>
-              <th>Preview</th>
-              <th>Action</th>
+                <th>Preview</th>
+                <th>Action</th>
               </tr>
             </thead>
             {fontFile &&
               fontFile.map((font, index) => (
                 <tr key={index}>
-                  <td>{index+1}</td>
+                  <td>{index + 1}</td>
                   <td>{font.name}</td>
                   <td>
                     <div
                       style={{
-                        fontFamily: "CustomFont" + index, 
+                        fontFamily: "CustomFont" + index,
                         fontSize: "20px",
                       }}
                     >
@@ -36,7 +35,10 @@ const FontList = ({fontFile,handleRemoveFile}) => {
                     </div>
                   </td>
                   <td>
-                    <button className='text-red-500 font-medium' onClick={() => handleRemoveFile(font.name)}>
+                    <button
+                      className="text-red-500 font-medium"
+                      onClick={() => handleRemoveFile(font.name)}
+                    >
                       Delete
                     </button>
                   </td>
@@ -44,19 +46,21 @@ const FontList = ({fontFile,handleRemoveFile}) => {
               ))}
           </table>
           {fontFile?.map((font, index) => (
-          <style key={index}>
-            {`
+            <style key={index}>
+              {`
               @font-face {
                 font-family: 'CustomFont${index}';
-                src: url('${URL.createObjectURL(font.file)}') format('truetype');
+                src: url('${URL.createObjectURL(
+                  font.file
+                )}') format('truetype');
               }
             `}
-          </style>
-        ))}
+            </style>
+          ))}
         </div>
       </div>
     )
-  )
-}
+  );
+};
 
-export default FontList
+export default FontList;

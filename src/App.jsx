@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import FontList from "./components/FontList";
 import swal from "sweetalert";
+import CreateFontGroup from "./components/CreateFontGroup";
 function App() {
   const [dragActive, setDragActive] = useState(false);
   const [fontFile, setFontFile] = useState([]);
@@ -100,7 +101,8 @@ function App() {
         handleRemoveFile={handleRemoveFile}
       ></FontList>
 
-      
+<CreateFontGroup fontFile={fontFile}></CreateFontGroup>
+
     </div>
   );
 }
