@@ -3,11 +3,7 @@ import React from "react";
 const FontList = ({ fontFile, handleRemoveFile }) => {
   return (
     fontFile?.length > 0 && (
-      <div className="mt-16">
-        <div>
-          <h3 className="text-2xl font-medium">Our Fonts</h3>
-          <p>Brouse a list of Zepto fonts to build your font group:</p>
-        </div>
+      <div className="mt-4">
 
         <div className="overflow-x-auto mt-2">
           <table className="table">

@@ -6,6 +6,8 @@ import CreateFontGroup from "./components/CreateFontGroup";
 function App() {
   const [dragActive, setDragActive] = useState(false);
   const [fontFile, setFontFile] = useState([]);
+  const [fontGroupList, setFrontGroupList] = useState([]);
+  console.log(fontGroupList);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -18,6 +20,7 @@ function App() {
       swal("Sorry!", "Please upload a valid font file (.ttf)", "warning");
     }
   };
+  
   const handleFileSelectDrag = (file) => {
     if (file && file.name.endsWith(".ttf")) {
       setFontFile((prevFiles) => [
@@ -95,14 +98,23 @@ function App() {
           )}
         </label>
       </div>
+      <div className="mt-16">
+        <h3 className="text-2xl font-medium">Our Fonts</h3>
+        <p>Brouse a list of Zepto fonts to build your font group:</p>
+        <FontList
+          fontFile={fontFile}
+          handleRemoveFile={handleRemoveFile}
+        ></FontList>
+      </div>
 
-      <FontList
-        fontFile={fontFile}
-        handleRemoveFile={handleRemoveFile}
-      ></FontList>
-
-<CreateFontGroup fontFile={fontFile}></CreateFontGroup>
-
+      <div className="mt-4">
+        <h2 className="text-2xl font-medium">Craete Font Group</h2>
+        <p>You have to select at least two fonts</p>
+        <CreateFontGroup
+          fontFile={fontFile}
+          setFrontGroupList={setFrontGroupList}
+        ></CreateFontGroup>
+      </div>
     </div>
   );
 }

@@ -1,18 +1,20 @@
 import React, { useRef } from "react";
 import { Formik, Field, FieldArray, Form } from "formik";
 import * as Yup from "yup";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
+import Select from "react-select";
 
-const CreateFontGroup = ({fontFile}) => {
+const CreateFontGroup = ({ fontFile,setFrontGroupList }) => {
   const ArrayHelperRef = useRef();
   const initialValues = {
-    fontGroupName: "", // Initially one font field
-    fontGroup: [{ fontName: "", font: "", fontSize: "", price: "" }], // Initially one font field
+    fontGroupName: "",
+    fontGroup: [{ fontName: "", font: "", fontSize: "", price: "" }],
   };
 
   const handleSubmit = (e, values, resetForm) => {
     e.preventDefault();
-
-    // Check if at least two fonts are selected
+console.log(values)
     if (values.fontGroup.length < 2) {
       alert("You must select at least two fonts before submitting!");
       return; // Prevent submission if less than two fonts
@@ -20,34 +22,38 @@ const CreateFontGroup = ({fontFile}) => {
 
     // Handle form submission (e.g., send to API or update state)
     console.log("Form submitted with values:", values);
+    setFrontGroupList((prev)=>[...prev,values])
     resetForm({ values: initialValues });
   };
-  const fontOptions  = fontFile.map((font) => ({
+
+
+  const fontOptions = fontFile.map((font) => ({
     value: font.name,
     label: font.name,
   }));
+
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={Yup.object({
-        fontGroupName: Yup.string().required('Font group name is required'),
+        fontGroupName: Yup.string().required("Font group name is required"),
         fontGroup: Yup.array().of(
           Yup.object().shape({
-            fontName: Yup.string().required('Font name is required'),
-            font: Yup.string().required('Font file is required'),
-            fontSize: Yup.string().required('Font size is required'),
-            price: Yup.string().required('Price is required'),
+            fontName: Yup.string().required("Font name is required"),
+            font: Yup.string().required("Font file is required"),
+            fontSize: Yup.string().required("Font size is required"),
+            price: Yup.string().required("Price is required"),
           })
         ),
       })}
       onSubmit={({ setSubmitting, resetForm, values }) => {
-        // Validate if there are at least two fonts before submitting
         if (values.fontGroup.length < 2) {
-          alert('You must select at least two fonts to create a font group.');
+          alert("You must select at least two fonts to create a font group.");
         } else {
           setSubmitting(false);
           resetForm({ values: initialValues });
-          console.log('Form submitted with values:', values);
+          console.log("Form submitted with values:", values);
         }
       }}
     >
@@ -65,169 +71,206 @@ const CreateFontGroup = ({fontFile}) => {
           onSubmit={(e) => {
             handleSubmit(e, values, resetForm);
           }}
-          className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md"
+          className="w-full mx-auto p-6 bg-white rounded-lg shadow-md"
         >
-          {/* Font Group Name */}
+          
           <div className="mb-4">
             <Field
               name="fontGroupName"
               placeholder="Font Group Name"
-              style={{
-                border: "1px solid #2DDC1B",
-                padding: "5px",
-                width: "100%",
-                borderRadius: "5px",
-                height: "38px",
-                marginBottom: "5px",
-                textAlign: "center",
-              }}
-              // className="w-full mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+         
+              className="w-full  p-2 border border-green-500 rounded-md focus:outline-none"
             />
             {errors.fontGroupName && touched.fontGroupName && (
-              <div className="text-red-500 text-sm mt-1">{errors.fontGroupName}</div>
+              <div className="text-red-500 text-sm mt-1">
+                {errors.fontGroupName}
+              </div>
             )}
           </div>
-
-          {/* Font Group (Dynamic Fields) */}
           <FieldArray
             name="fontGroup"
             render={(arrayHelpers) => {
               ArrayHelperRef.current = arrayHelpers;
               const fontGroup = values.fontGroup;
-
+          
               return (
-                <div className="space-y-6">
-                  <div className="flex flex-col space-y-4">
-                    {fontGroup.map((font, index) => (
-                      <div
-                        key={index}
-                        className="flex border-b border-gray-300 pb-4"
-                      >
-                        {/* Font Name */}
-                        <div className="flex-1 px-4">
-                          <Field
-                            name={`fontGroup[${index}].fontName`}
-                            placeholder="Font Name"
-                            style={{
-                              border: "1px solid #2DDC1B",
-                              padding: "5px",
-                              width: "100%",
-                              borderRadius: "5px",
-                              height: "38px",
-                              marginBottom: "5px",
-                              textAlign: "center",
-                            }}
-                            // className="w-full mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                          {errors.fontGroup?.[index]?.fontName &&
-                            touched.fontGroup?.[index]?.fontName && (
-                              <div className="text-red-500 text-sm mt-1">
-                                {errors.fontGroup[index].fontName}
+                <div className="space-y-6 w-full">
+
+                  <table className="table border border-gray-300 w-full border-collapse">
+                    <thead></thead>
+                    <tbody>
+                      {fontGroup.map((fonts, index) => {
+                        console.log();
+                        return (
+                          <tr key={index} className="border border-gray-300">
+                            <td className="px-4 py-2 text-center">
+                              <Field
+                                name={`fontGroup[${index}].fontName`}
+                                placeholder="Font Name"
+                                type="text"
+                                className="w-full  p-2 border border-green-500 rounded-md focus:outline-none"
+                                onChange={(e) => {
+                                  setFieldValue(
+                                    `fontGroup.${index}.fontName`,
+                                    e.target.value
+                                  );
+                                }}
+                              />
+                              {errors.fontGroup?.[index]?.fontName &&
+                                touched.fontGroup?.[index]?.fontName && (
+                                  <div className="text-red-500 text-sm mt-1">
+                                    {errors.fontGroup[index].fontName}
+                                  </div>
+                                )}
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <div className="">
+                                <Select
+                                  class="form-select"
+                                  className=" "
+                                  aria-label="Default select example"
+                                  name={`fontGroup[${index}].font`}
+                                  placeholder="Select Font"
+                                  options={fontOptions}
+                                  defaultValue={{
+                                    label: "Select Font",
+                                    value: 0,
+                                  }}
+                                  value={
+                                    fontOptions.find(
+                                      (option) => option.label === fonts.font
+                                    ) || {
+                                      label: "Select Font",
+                                      value: 0,
+                                    }
+                                  }
+                                  styles={{
+                                    control: (baseStyles) => ({
+                                      ...baseStyles,
+                                      width: "100%",
+                                      borderColor: "#2DDC1B",
+                                      minHeight: "38px",
+                                      textAlign: "center",
+                                    }),
+                                    menu: (provided) => ({
+                                      ...provided,
+                                      zIndex: 9999,
+                                    }),
+                                    menuPortal: (base) => ({
+                                      ...base,
+                                      zIndex: 9999,
+                                    }),
+                                  }}
+                                  theme={(theme) => ({
+                                    ...theme,
+                                    colors: {
+                                      ...theme.colors,
+                                      primary25: "#B8FEB3",
+                                      primary: "#2DDC1B",
+                                    },
+                                  })}
+                                  menuPosition="fixed"
+                                  menuPortalTarget={document.body}
+                                  onChange={(e) => {
+                                    setFieldValue(
+                                      `fontGroup.${index}.font`,
+                                      e.value
+                                    );
+                                  }}
+                                ></Select>
                               </div>
-                            )}
-                        </div>
-
-                        {/* Font File */}
-                        <div className="flex-1 px-4">
-                        <Field
-                          as="select"
-                          name={`fontGroup[${index}].font`}
-                          className="w-full mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="">Select Font</option>
-                          {fontOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </Field>
-                        {errors.fontGroup?.[index]?.font &&
-                          touched.fontGroup?.[index]?.font && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {errors.fontGroup[index].font}
-                            </div>
-                          )}
-                      </div>
-
-
-                        {/* Font Size */}
-                        <div className="flex-1 px-4">
-                          <Field
-                            name={`fontGroup[${index}].fontSize`}
-                            placeholder="Font Size"
-                            className="w-full mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                          {errors.fontGroup?.[index]?.fontSize &&
-                            touched.fontGroup?.[index]?.fontSize && (
-                              <div className="text-red-500 text-sm mt-1">
-                                {errors.fontGroup[index].fontSize}
-                              </div>
-                            )}
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex-1 px-4">
-                          <Field
-                            name={`fontGroup[${index}].price`}
-                            placeholder="Price"
-                            className="w-full mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                          {errors.fontGroup?.[index]?.price &&
-                            touched.fontGroup?.[index]?.price && (
-                              <div className="text-red-500 text-sm mt-1">
-                                {errors.fontGroup[index].price}
-                              </div>
-                            )}
-                        </div>
-
-                        {/* Remove Field */}
-                        {fontGroup.length > 1 && (
-                          <div className="flex items-center px-4">
-                            <button
-                              type="button"
-                              onClick={() => arrayHelpers.remove(index)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              Remove Font
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                              {errors.fontGroup?.[index]?.font &&
+                                touched.fontGroup?.[index]?.font && (
+                                  <div className="text-red-500 text-sm mt-1">
+                                    {errors.fontGroup[index].font}
+                                  </div>
+                                )}
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <Field
+                              
+                                name={`fontGroup[${index}].fontSize`}
+                                placeholder="Font Size"
+                                type="number"
+                                className="w-full  p-2 border border-green-500 rounded-md focus:outline-none"
+                                onChange={(e)=>{
+                                  setFieldValue(`fontGroup.${index}.fontSize`,e.target.value)
+                                }}
+                              />
+                              {errors.fontGroup?.[index]?.fontSize &&
+                                touched.fontGroup?.[index]?.fontSize && (
+                                  <div className="text-red-500 text-sm mt-1">
+                                    {errors.fontGroup[index].fontSize}
+                                  </div>
+                                )}
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <Field
+                                name={`fontGroup[${index}].price`}
+                                placeholder="Price"
+                                type="number"
+                                className="w-full  p-2 border border-green-500 rounded-md focus:outline-none"
+                                onChange={(e)=>{
+                                  setFieldValue(`fontGroup.${index}.price`,e.target.value)
+                                }}
+                              />
+                              {errors.fontGroup?.[index]?.price &&
+                                touched.fontGroup?.[index]?.price && (
+                                  <div className="text-red-500 text-sm mt-1">
+                                    {errors.fontGroup[index].price}
+                                  </div>
+                                )}
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <button
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <FontAwesomeIcon
+                                  className="text-3xl"
+                                  icon={faXmarkCircle}
+                                ></FontAwesomeIcon>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
 
                   {/* Add Row Button */}
-                  <div className="flex justify-start">
+                  <div className="flex justify-between items-center">
                     <button
                       type="button"
                       onClick={() =>
                         arrayHelpers.push({
-                          fontName: '',
-                          font: '',
-                          fontSize: '',
-                          price: '',
+                          fontName: "",
+                          font: "",
+                          fontSize: "",
+                          price: "",
                         })
                       }
-                      className="px-4 py-2 mt-4 text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                      className="px-4 py-2 mt-4 border border-gray-300 text-black bg-transparent hover:bg-blue-700 rounded-md"
                     >
-                      Add Font
+                    <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>  Add Font
                     </button>
+
+                    <div className="ms-4 ">
+                      <button
+                        type="submit"
+                        id="font-group-form"
+                        disabled={!isValid || !dirty}
+                        className="px-4 py-2 mt-4 text-white bg-green-500 hover:bg-green-600 rounded-md"
+                      >
+                       Craete
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
             }}
           />
-
-          {/* Submit Button */}
-          <div className="flex justify-center mt-6">
-            <button
-              type="submit"
-              disabled={!isValid || !dirty}
-              className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Submit
-            </button>
-          </div>
         </Form>
       )}
     </Formik>
