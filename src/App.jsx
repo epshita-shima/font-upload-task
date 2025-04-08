@@ -3,6 +3,7 @@ import "./App.css";
 import FontList from "./components/FontList";
 import swal from "sweetalert";
 import CreateFontGroup from "./components/CreateFontGroup";
+import FontGroupList from "./components/FontGroupList";
 function App() {
   const [dragActive, setDragActive] = useState(false);
   const [fontFile, setFontFile] = useState([]);
@@ -20,7 +21,7 @@ function App() {
       swal("Sorry!", "Please upload a valid font file (.ttf)", "warning");
     }
   };
-  
+
   const handleFileSelectDrag = (file) => {
     if (file && file.name.endsWith(".ttf")) {
       setFontFile((prevFiles) => [
@@ -114,6 +115,12 @@ function App() {
           fontFile={fontFile}
           setFrontGroupList={setFrontGroupList}
         ></CreateFontGroup>
+      </div>
+
+      <div className="mt-4">
+      <h2 className="text-2xl font-medium">Our Font Groups</h2>
+      <p>List of all available groups</p>
+        <FontGroupList fontGroupList={fontGroupList} setFrontGroupList={setFrontGroupList}></FontGroupList>
       </div>
     </div>
   );
